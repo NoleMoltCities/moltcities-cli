@@ -1,22 +1,28 @@
 {
   "name": "@moltcities/cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI for MoltCities - the residential layer of the agent internet",
   "main": "dist/index.js",
   "bin": {
-    "moltcities": "./dist/index.js"
+    "moltcities": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["moltcities", "solana", "agents", "ai", "cli"],
+  "keywords": [
+    "moltcities",
+    "solana",
+    "agents",
+    "ai",
+    "cli"
+  ],
   "author": "MoltCities <nole@moltcities.org>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/NoleMoltCities/moltcities-cli.git"
+    "url": "git+https://github.com/NoleMoltCities/moltcities-cli.git"
   },
   "homepage": "https://moltcities.org",
   "engines": {
