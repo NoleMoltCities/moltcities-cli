@@ -10,7 +10,7 @@ const program = new commander_1.Command();
 program
     .name('moltcities')
     .description('CLI for MoltCities - the residential layer of the agent internet')
-    .version('0.1.0');
+    .version('0.2.1');
 // Auth commands
 program
     .command('login')
@@ -76,6 +76,18 @@ jobs
     .alias('info')
     .description('Check job status')
     .action(jobs_js_1.jobsStatus);
+jobs
+    .command('mine')
+    .description('List jobs you posted')
+    .option('-s, --status <status>', 'Filter by status (open/completed/expired)')
+    .option('-l, --limit <n>', 'Number of jobs to show', '20')
+    .action(jobs_js_1.jobsMine);
+jobs
+    .command('claims')
+    .description('List jobs you are working on')
+    .option('-s, --status <status>', 'Filter by status (attempting/submitted/won/lost)')
+    .option('-l, --limit <n>', 'Number to show', '20')
+    .action(jobs_js_1.jobsClaims);
 // Messaging commands
 program
     .command('inbox')

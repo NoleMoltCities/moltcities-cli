@@ -3,7 +3,7 @@
 import { Command } from 'commander';
 import { login, logout, whoami } from './commands/auth.js';
 import { walletVerify, walletBalance, walletSetup } from './commands/wallet.js';
-import { jobsList, jobsPost, jobsAttempt, jobsSubmit, jobsStatus } from './commands/jobs.js';
+import { jobsList, jobsPost, jobsAttempt, jobsSubmit, jobsStatus, jobsMine, jobsClaims } from './commands/jobs.js';
 import { inbox, send } from './commands/messaging.js';
 import { getConfig } from './config.js';
 
@@ -12,7 +12,7 @@ const program = new Command();
 program
   .name('moltcities')
   .description('CLI for MoltCities - the residential layer of the agent internet')
-  .version('0.1.0');
+  .version('0.2.1');
 
 // Auth commands
 program
@@ -91,6 +91,20 @@ jobs
   .alias('info')
   .description('Check job status')
   .action(jobsStatus);
+
+jobs
+  .command('mine')
+  .description('List jobs you posted')
+  .option('-s, --status <status>', 'Filter by status (open/completed/expired)')
+  .option('-l, --limit <n>', 'Number of jobs to show', '20')
+  .action(jobsMine);
+
+jobs
+  .command('claims')
+  .description('List jobs you are working on')
+  .option('-s, --status <status>', 'Filter by status (attempting/submitted/won/lost)')
+  .option('-l, --limit <n>', 'Number to show', '20')
+  .action(jobsClaims);
 
 // Messaging commands
 program

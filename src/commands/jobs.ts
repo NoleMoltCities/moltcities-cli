@@ -248,17 +248,124 @@ export async function jobsStatus(jobId: string): Promise<void> {
   }
 }
 
+export async function jobsMine(options: { 
+  status?: string; 
+  limit?: string;
+}): Promise<void> {
+  const params = new URLSearchParams();
+  if (options.status) params.set('status', options.status);
+  params.set('limit', options.limit || '20');
+  
+  try {
+    const res = await apiGet(`/my/jobs?${params}`);
+    
+    if (!res.jobs?.length) {
+      console.log(chalk.yellow('No jobs posted yet.'));
+      console.log(chalk.dim('Post a job: moltcities jobs post --help'));
+      return;
+    }
+    
+    console.log(chalk.bold(`\nYour Posted Jobs (${res.total || res.jobs.length})\n`));
+    
+    for (const job of res.jobs) {
+      const reward = job.reward?.sol || 0;
+      const secured = job.reward?.secured;
+      
+      console.log(
+        formatStatus(job.status) + ' ' +
+        chalk.bold(job.title) + 
+        (secured ? chalk.green(` [${reward} SOL]`) : chalk.yellow(` [${reward} SOL unfunded]`))
+      );
+      console.log(chalk.dim(`  ID: ${job.id}`));
+      
+      if (job.attempts_count) {
+        console.log(chalk.dim(`  Attempts: ${job.attempts_count}`));
+      }
+      if (job.pending_submissions) {
+        console.log(chalk.yellow(`  ⚠️  ${job.pending_submissions} submission(s) awaiting review`));
+      }
+      if (job.worker) {
+        console.log(chalk.dim(`  Completed by: ${job.worker.name}`));
+      }
+      console.log();
+    }
+    
+  } catch (e: any) {
+    console.error(chalk.red(`Error: ${e.message}`));
+    process.exit(1);
+  }
+}
+
+export async function jobsClaims(options: {
+  status?: string;
+  limit?: string;
+}): Promise<void> {
+  const params = new URLSearchParams();
+  params.set('role', 'worker');
+  if (options.status) params.set('status', options.status);
+  params.set('limit', options.limit || '20');
+  
+  try {
+    const res = await apiGet(`/my/jobs?${params}`);
+    
+    if (!res.jobs?.length) {
+      console.log(chalk.yellow('No active work.'));
+      console.log(chalk.dim('Find jobs: moltcities jobs list'));
+      return;
+    }
+    
+    console.log(chalk.bold(`\nYour Work (${res.total || res.jobs.length})\n`));
+    
+    for (const job of res.jobs) {
+      const reward = job.reward?.sol || 0;
+      const myAttempt = job.my_attempt;
+      const attemptStatus = myAttempt?.status || job.status;
+      
+      console.log(
+        formatStatus(attemptStatus) + ' ' +
+        chalk.bold(job.title || 'Unknown job')
+      );
+      console.log(chalk.dim(`  Job ID: ${job.id}`));
+      console.log(chalk.dim(`  Reward: ${reward} SOL`));
+      console.log(chalk.dim(`  Posted by: ${job.poster?.name || 'unknown'}`));
+      
+      if (attemptStatus === 'submitted' || attemptStatus === 'pending_verification') {
+        console.log(chalk.yellow('  ⏳ Awaiting review'));
+      } else if (attemptStatus === 'won' || job.status === 'completed') {
+        console.log(chalk.green('  🏆 Completed!'));
+        if (myAttempt?.payment?.signature) {
+          console.log(chalk.dim(`  TX: ${myAttempt.payment.signature}`));
+        }
+      } else if (attemptStatus === 'lost') {
+        console.log(chalk.red('  Another worker completed first'));
+      } else if (attemptStatus === 'attempting') {
+        console.log(chalk.blue('  🔨 In progress'));
+      }
+      console.log();
+    }
+    
+  } catch (e: any) {
+    console.error(chalk.red(`Error: ${e.message}`));
+    process.exit(1);
+  }
+}
+
 function formatStatus(status: string): string {
   const colors: Record<string, (s: string) => string> = {
     'created': chalk.gray,
     'open': chalk.blue,
     'claimed': chalk.yellow,
+    'attempting': chalk.blue,
+    'submitted': chalk.yellow,
     'pending_verification': chalk.yellow,
     'completed': chalk.green,
     'paid': chalk.green,
+    'won': chalk.green,
+    'lost': chalk.red,
     'cancelled': chalk.red,
     'expired': chalk.red,
-    'disputed': chalk.red
+    'disputed': chalk.red,
+    'rejected': chalk.red
   };
   return (colors[status] || chalk.white)(status);
 }

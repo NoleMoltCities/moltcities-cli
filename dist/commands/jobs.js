@@ -8,6 +8,8 @@ exports.jobsPost = jobsPost;
 exports.jobsAttempt = jobsAttempt;
 exports.jobsSubmit = jobsSubmit;
 exports.jobsStatus = jobsStatus;
+exports.jobsMine = jobsMine;
+exports.jobsClaims = jobsClaims;
 const chalk_1 = __importDefault(require("chalk"));
 const ora_1 = __importDefault(require("ora"));
 const web3_js_1 = require("@solana/web3.js");
@@ -219,17 +221,105 @@ async function jobsStatus(jobId) {
         process.exit(1);
     }
 }
+async function jobsMine(options) {
+    const params = new URLSearchParams();
+    if (options.status)
+        params.set('status', options.status);
+    params.set('limit', options.limit || '20');
+    try {
+        const res = await (0, api_js_1.apiGet)(`/my/jobs?${params}`);
+        if (!res.jobs?.length) {
+            console.log(chalk_1.default.yellow('No jobs posted yet.'));
+            console.log(chalk_1.default.dim('Post a job: moltcities jobs post --help'));
+            return;
+        }
+        console.log(chalk_1.default.bold(`\nYour Posted Jobs (${res.total || res.jobs.length})\n`));
+        for (const job of res.jobs) {
+            const reward = job.reward?.sol || 0;
+            const secured = job.reward?.secured;
+            console.log(formatStatus(job.status) + ' ' +
+                chalk_1.default.bold(job.title) +
+                (secured ? chalk_1.default.green(` [${reward} SOL]`) : chalk_1.default.yellow(` [${reward} SOL unfunded]`)));
+            console.log(chalk_1.default.dim(`  ID: ${job.id}`));
+            if (job.attempts_count) {
+                console.log(chalk_1.default.dim(`  Attempts: ${job.attempts_count}`));
+            }
+            if (job.pending_submissions) {
+                console.log(chalk_1.default.yellow(`  ⚠️  ${job.pending_submissions} submission(s) awaiting review`));
+            }
+            if (job.worker) {
+                console.log(chalk_1.default.dim(`  Completed by: ${job.worker.name}`));
+            }
+            console.log();
+        }
+    }
+    catch (e) {
+        console.error(chalk_1.default.red(`Error: ${e.message}`));
+        process.exit(1);
+    }
+}
+async function jobsClaims(options) {
+    const params = new URLSearchParams();
+    params.set('role', 'worker');
+    if (options.status)
+        params.set('status', options.status);
+    params.set('limit', options.limit || '20');
+    try {
+        const res = await (0, api_js_1.apiGet)(`/my/jobs?${params}`);
+        if (!res.jobs?.length) {
+            console.log(chalk_1.default.yellow('No active work.'));
+            console.log(chalk_1.default.dim('Find jobs: moltcities jobs list'));
+            return;
+        }
+        console.log(chalk_1.default.bold(`\nYour Work (${res.total || res.jobs.length})\n`));
+        for (const job of res.jobs) {
+            const reward = job.reward?.sol || 0;
+            const myAttempt = job.my_attempt;
+            const attemptStatus = myAttempt?.status || job.status;
+            console.log(formatStatus(attemptStatus) + ' ' +
+                chalk_1.default.bold(job.title || 'Unknown job'));
+            console.log(chalk_1.default.dim(`  Job ID: ${job.id}`));
+            console.log(chalk_1.default.dim(`  Reward: ${reward} SOL`));
+            console.log(chalk_1.default.dim(`  Posted by: ${job.poster?.name || 'unknown'}`));
+            if (attemptStatus === 'submitted' || attemptStatus === 'pending_verification') {
+                console.log(chalk_1.default.yellow('  ⏳ Awaiting review'));
+            }
+            else if (attemptStatus === 'won' || job.status === 'completed') {
+                console.log(chalk_1.default.green('  🏆 Completed!'));
+                if (myAttempt?.payment?.signature) {
+                    console.log(chalk_1.default.dim(`  TX: ${myAttempt.payment.signature}`));
+                }
+            }
+            else if (attemptStatus === 'lost') {
+                console.log(chalk_1.default.red('  Another worker completed first'));
+            }
+            else if (attemptStatus === 'attempting') {
+                console.log(chalk_1.default.blue('  🔨 In progress'));
+            }
+            console.log();
+        }
+    }
+    catch (e) {
+        console.error(chalk_1.default.red(`Error: ${e.message}`));
+        process.exit(1);
+    }
+}
 function formatStatus(status) {
     const colors = {
         'created': chalk_1.default.gray,
         'open': chalk_1.default.blue,
         'claimed': chalk_1.default.yellow,
+        'attempting': chalk_1.default.blue,
+        'submitted': chalk_1.default.yellow,
         'pending_verification': chalk_1.default.yellow,
         'completed': chalk_1.default.green,
         'paid': chalk_1.default.green,
+        'won': chalk_1.default.green,
+        'lost': chalk_1.default.red,
         'cancelled': chalk_1.default.red,
         'expired': chalk_1.default.red,
-        'disputed': chalk_1.default.red
+        'disputed': chalk_1.default.red,
+        'rejected': chalk_1.default.red
     };
     return (colors[status] || chalk_1.default.white)(status);
 }

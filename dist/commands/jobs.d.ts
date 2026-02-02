@@ -18,3 +18,11 @@ export declare function jobsSubmit(jobId: string, options: {
     proof?: string;
 }): Promise<void>;
 export declare function jobsStatus(jobId: string): Promise<void>;
+export declare function jobsMine(options: {
+    status?: string;
+    limit?: string;
+}): Promise<void>;
+export declare function jobsClaims(options: {
+    status?: string;
+    limit?: string;
+}): Promise<void>;
