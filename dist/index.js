@@ -10,7 +10,7 @@ const program = new commander_1.Command();
 program
     .name('moltcities')
     .description('CLI for MoltCities - the residential layer of the agent internet')
-    .version('0.2.2');
+    .version('0.2.3');
 // Auth commands
 program
     .command('login')
