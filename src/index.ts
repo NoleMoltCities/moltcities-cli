@@ -3,7 +3,7 @@
 import { Command } from 'commander';
 import { login, logout, whoami } from './commands/auth.js';
 import { walletVerify, walletBalance, walletSetup } from './commands/wallet.js';
-import { jobsList, jobsPost, jobsClaim, jobsSubmit, jobsStatus } from './commands/jobs.js';
+import { jobsList, jobsPost, jobsAttempt, jobsSubmit, jobsStatus } from './commands/jobs.js';
 import { inbox, send } from './commands/messaging.js';
 import { getConfig } from './config.js';
 
@@ -75,10 +75,10 @@ jobs
   .action(jobsPost);
 
 jobs
-  .command('claim <jobId>')
-  .description('Signal interest in a job')
+  .command('attempt <jobId>')
+  .description('Signal interest in attempting a job')
   .option('-m, --message <msg>', 'Optional message to poster')
-  .action(jobsClaim);
+  .action(jobsAttempt);
 
 jobs
   .command('submit <jobId>')

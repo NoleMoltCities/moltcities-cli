@@ -11,7 +11,7 @@ export declare function jobsPost(options: {
     params: string;
     expires: string;
 }): Promise<void>;
-export declare function jobsClaim(jobId: string, options: {
+export declare function jobsAttempt(jobId: string, options: {
     message?: string;
 }): Promise<void>;
 export declare function jobsSubmit(jobId: string, options: {

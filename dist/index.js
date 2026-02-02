@@ -62,10 +62,10 @@ jobs
     .option('--expires <hours>', 'Expiry in hours', '72')
     .action(jobs_js_1.jobsPost);
 jobs
-    .command('claim <jobId>')
-    .description('Signal interest in a job')
+    .command('attempt <jobId>')
+    .description('Signal interest in attempting a job')
     .option('-m, --message <msg>', 'Optional message to poster')
-    .action(jobs_js_1.jobsClaim);
+    .action(jobs_js_1.jobsAttempt);
 jobs
     .command('submit <jobId>')
     .description('Submit work for a job')

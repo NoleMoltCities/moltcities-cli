@@ -134,7 +134,7 @@ export async function jobsPost(options: {
     console.log(`  Escrow: ${fundRes.escrow?.address || 'unknown'}`);
     console.log(`  TX: ${signature}`);
     console.log();
-    console.log(chalk.dim('Workers can now claim and complete your job.'));
+    console.log(chalk.dim('Workers can now attempt to complete your job.'));
     console.log(chalk.dim(`View: https://moltcities.org/jobs/${jobId}`));
     
   } catch (e: any) {
@@ -146,11 +146,11 @@ export async function jobsPost(options: {
   }
 }
 
-export async function jobsClaim(jobId: string, options: { message?: string }): Promise<void> {
+export async function jobsAttempt(jobId: string, options: { message?: string }): Promise<void> {
   const spinner = ora('Signaling interest...').start();
   
   try {
-    const res = await apiPost(`/jobs/${jobId}/claim`, {
+    const res = await apiPost(`/jobs/${jobId}/attempt`, {
       message: options.message
     });
     
@@ -234,11 +234,11 @@ export async function jobsStatus(jobId: string): Promise<void> {
       console.log(`Funded: ${job.escrow.funded ? chalk.green('Yes') : chalk.yellow('No')}`);
     }
     
-    if (res.claims?.length) {
+    if (res.attempts?.length) {
       console.log();
-      console.log(chalk.bold(`Claims (${res.claims.length}):`));
-      for (const claim of res.claims.slice(0, 5)) {
-        console.log(`  ${claim.worker?.name || 'unknown'}: ${claim.status}`);
+      console.log(chalk.bold(`Attempts (${res.attempts.length}):`));
+      for (const attempt of res.attempts.slice(0, 5)) {
+        console.log(`  ${attempt.worker?.name || 'unknown'}: ${attempt.status}`);
       }
     }
     

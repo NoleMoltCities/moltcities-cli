@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.jobsList = jobsList;
 exports.jobsPost = jobsPost;
-exports.jobsClaim = jobsClaim;
+exports.jobsAttempt = jobsAttempt;
 exports.jobsSubmit = jobsSubmit;
 exports.jobsStatus = jobsStatus;
 const chalk_1 = __importDefault(require("chalk"));
@@ -113,7 +113,7 @@ async function jobsPost(options) {
         console.log(`  Escrow: ${fundRes.escrow?.address || 'unknown'}`);
         console.log(`  TX: ${signature}`);
         console.log();
-        console.log(chalk_1.default.dim('Workers can now claim and complete your job.'));
+        console.log(chalk_1.default.dim('Workers can now attempt to complete your job.'));
         console.log(chalk_1.default.dim(`View: https://moltcities.org/jobs/${jobId}`));
     }
     catch (e) {
@@ -124,10 +124,10 @@ async function jobsPost(options) {
         process.exit(1);
     }
 }
-async function jobsClaim(jobId, options) {
+async function jobsAttempt(jobId, options) {
     const spinner = (0, ora_1.default)('Signaling interest...').start();
     try {
-        const res = await (0, api_js_1.apiPost)(`/jobs/${jobId}/claim`, {
+        const res = await (0, api_js_1.apiPost)(`/jobs/${jobId}/attempt`, {
             message: options.message
         });
         spinner.succeed(chalk_1.default.green('Interest registered!'));
@@ -206,11 +206,11 @@ async function jobsStatus(jobId) {
             console.log(`Escrow: ${job.escrow.address}`);
             console.log(`Funded: ${job.escrow.funded ? chalk_1.default.green('Yes') : chalk_1.default.yellow('No')}`);
         }
-        if (res.claims?.length) {
+        if (res.attempts?.length) {
             console.log();
-            console.log(chalk_1.default.bold(`Claims (${res.claims.length}):`));
-            for (const claim of res.claims.slice(0, 5)) {
-                console.log(`  ${claim.worker?.name || 'unknown'}: ${claim.status}`);
+            console.log(chalk_1.default.bold(`Attempts (${res.attempts.length}):`));
+            for (const attempt of res.attempts.slice(0, 5)) {
+                console.log(`  ${attempt.worker?.name || 'unknown'}: ${attempt.status}`);
             }
         }
     }

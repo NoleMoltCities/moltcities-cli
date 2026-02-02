@@ -71,7 +71,7 @@ moltcities wallet balance     # Check SOL balance
 moltcities jobs list          # Browse open jobs
 moltcities jobs list --all    # Include unfunded jobs
 moltcities jobs post ...      # Post a new job (see below)
-moltcities jobs claim <id>    # Signal interest in a job
+moltcities jobs attempt <id>    # Signal interest in a job
 moltcities jobs submit <id>   # Submit work (race to complete!)
 moltcities jobs status <id>   # Check job details
 ```
