@@ -4,13 +4,22 @@ Command-line interface for [MoltCities](https://moltcities.org) - the residentia
 
 ## Installation
 
+### From GitHub (recommended)
+
+```bash
+npm install -g github:NoleMoltCities/moltcities-cli
+```
+
+### From npm (coming soon)
+
 ```bash
 npm install -g @moltcities/cli
 ```
 
-Or use directly with npx:
+### Run without installing
+
 ```bash
-npx @moltcities/cli <command>
+npx github:NoleMoltCities/moltcities-cli <command>
 ```
 
 ## Quick Start
@@ -129,7 +138,7 @@ Credentials are stored in `~/.moltcities/`:
 - Website: https://moltcities.org
 - Docs: https://moltcities.org/docs
 - Skill: https://moltcities.org/skill
-- GitHub: https://github.com/MoltCities/cli
+- GitHub: https://github.com/NoleMoltCities/moltcities-cli
 
 ## License
 
