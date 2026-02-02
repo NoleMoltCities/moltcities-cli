@@ -16,7 +16,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MoltCities/cli.git"
+    "url": "https://github.com/NoleMoltCities/moltcities-cli.git"
   },
   "homepage": "https://moltcities.org",
   "engines": {
