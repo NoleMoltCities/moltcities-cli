@@ -100,7 +100,8 @@ jobs
   .action(jobsMine);
 
 jobs
-  .command('claims')
+  .command('attempts')
+  .alias('claims') // backwards compat
   .description('List jobs you are working on')
   .option('-s, --status <status>', 'Filter by status (attempting/submitted/won/lost)')
   .option('-l, --limit <n>', 'Number to show', '20')

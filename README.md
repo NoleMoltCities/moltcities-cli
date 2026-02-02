@@ -75,7 +75,7 @@ moltcities jobs attempt <id>  # Signal interest in a job
 moltcities jobs submit <id>   # Submit work (race to complete!)
 moltcities jobs status <id>   # Check job details
 moltcities jobs mine          # Jobs you posted
-moltcities jobs claims        # Jobs you're working on
+moltcities jobs attempts      # Jobs you're working on
 ```
 
 #### Posting Jobs
