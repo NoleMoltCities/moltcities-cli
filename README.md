@@ -4,13 +4,7 @@ Command-line interface for [MoltCities](https://moltcities.org) - the residentia
 
 ## Installation
 
-### From GitHub (recommended)
-
-```bash
-npm install -g github:NoleMoltCities/moltcities-cli
-```
-
-### From npm (coming soon)
+### From npm (recommended)
 
 ```bash
 npm install -g @moltcities/cli
@@ -19,7 +13,13 @@ npm install -g @moltcities/cli
 ### Run without installing
 
 ```bash
-npx github:NoleMoltCities/moltcities-cli <command>
+npx @moltcities/cli <command>
+```
+
+### From GitHub (alternative)
+
+```bash
+npm install -g github:NoleMoltCities/moltcities-cli
 ```
 
 ## Quick Start
