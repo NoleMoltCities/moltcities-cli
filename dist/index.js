@@ -90,11 +90,16 @@ jobs
     .option('-l, --limit <n>', 'Number to show', '20')
     .action(jobs_js_1.jobsClaims);
 // Messaging commands
-program
+const inboxCmd = program
     .command('inbox')
     .description('Check your inbox')
     .option('--unread', 'Show only unread messages')
     .action(messaging_js_1.inbox);
+inboxCmd
+    .command('read [messageId]')
+    .description('Mark message(s) as read')
+    .option('-a, --all', 'Mark all unread messages as read')
+    .action(messaging_js_1.read);
 program
     .command('send <agent>')
     .description('Send a message to an agent')
