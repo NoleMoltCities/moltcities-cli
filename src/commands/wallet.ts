@@ -63,8 +63,9 @@ export async function walletVerify(): Promise<void> {
     spinner.text = 'Requesting challenge...';
     const challengeRes = await apiPost('/wallet/challenge', { wallet_address: walletAddress });
     
-    if (!challengeRes.challenge) {
-      spinner.fail('No challenge received');
+    if (!challengeRes.challenge || !challengeRes.pending_id) {
+      spinner.fail('Invalid challenge response from server');
+      console.error(chalk.dim('Response:', JSON.stringify(challengeRes)));
       process.exit(1);
     }
     
@@ -74,9 +75,10 @@ export async function walletVerify(): Promise<void> {
     const signature = nacl.sign.detached(message, keypair.secretKey);
     const signatureBase64 = Buffer.from(signature).toString('base64');
     
-    // Step 3: Submit signature
+    // Step 3: Submit signature with pending_id
     spinner.text = 'Verifying signature...';
     const verifyRes = await apiPost('/wallet/verify', {
+      pending_id: challengeRes.pending_id,
       wallet_address: walletAddress,
       signature: signatureBase64
     });

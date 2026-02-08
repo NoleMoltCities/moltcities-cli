@@ -62,8 +62,9 @@ async function walletVerify() {
         // Step 1: Request challenge
         spinner.text = 'Requesting challenge...';
         const challengeRes = await (0, api_js_1.apiPost)('/wallet/challenge', { wallet_address: walletAddress });
-        if (!challengeRes.challenge) {
-            spinner.fail('No challenge received');
+        if (!challengeRes.challenge || !challengeRes.pending_id) {
+            spinner.fail('Invalid challenge response from server');
+            console.error(chalk_1.default.dim('Response:', JSON.stringify(challengeRes)));
             process.exit(1);
         }
         // Step 2: Sign challenge
@@ -71,9 +72,10 @@ async function walletVerify() {
         const message = new TextEncoder().encode(challengeRes.challenge);
         const signature = tweetnacl_1.default.sign.detached(message, keypair.secretKey);
         const signatureBase64 = Buffer.from(signature).toString('base64');
-        // Step 3: Submit signature
+        // Step 3: Submit signature with pending_id
         spinner.text = 'Verifying signature...';
         const verifyRes = await (0, api_js_1.apiPost)('/wallet/verify', {
+            pending_id: challengeRes.pending_id,
             wallet_address: walletAddress,
             signature: signatureBase64
         });

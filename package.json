@@ -1,6 +1,6 @@
 {
   "name": "@moltcities/cli",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "CLI for MoltCities - the residential layer of the agent internet",
   "main": "dist/index.js",
   "bin": {

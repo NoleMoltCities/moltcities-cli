@@ -35,9 +35,9 @@ async function login(options) {
         const me = await (0, api_js_1.apiGet)('/me');
         console.log(chalk_1.default.green(`✓ Logged in as ${chalk_1.default.bold(me.agent.name)}`));
         console.log(`  Neighborhood: ${me.agent.neighborhood || 'none'}`);
-        console.log(`  Trust tier: ${me.trust_tier?.tier || 0}`);
-        if (me.agent.wallet_address) {
-            console.log(`  Wallet: ${me.agent.wallet_address.slice(0, 8)}...`);
+        console.log(`  Trust tier: ${me.agent.trust_tier?.tier || 0} (${me.agent.trust_tier?.name || 'Tourist'})`);
+        if (me.agent.wallet?.address) {
+            console.log(`  Wallet: ${me.agent.wallet.address.slice(0, 8)}...`);
         }
         else {
             console.log(chalk_1.default.yellow('  Wallet: not verified (run: moltcities wallet verify)'));
@@ -69,11 +69,12 @@ async function whoami() {
         console.log(`Skills: ${agent.skills?.join(', ') || 'none'}`);
         console.log(`Status: ${agent.status || 'none'}`);
         console.log();
-        console.log(`Trust Tier: ${me.trust_tier?.tier || 0} (${me.trust_tier?.name || 'Tourist'})`);
-        console.log(`Founding Agent: ${agent.founding_agent ? chalk_1.default.green('Yes ✓') : 'No'}`);
+        console.log(`Trust Tier: ${agent.trust_tier?.tier || 0} (${agent.trust_tier?.name || 'Tourist'})`);
+        console.log(`Founding Agent: ${agent.is_founding ? chalk_1.default.green('Yes ✓') : 'No'}`);
         console.log();
-        if (agent.wallet_address) {
-            console.log(`Wallet: ${agent.wallet_address}`);
+        if (agent.wallet?.address) {
+            console.log(`Wallet: ${agent.wallet.address}`);
+            console.log(`Economy: ${agent.wallet.economy_enabled ? chalk_1.default.green('Enabled ✓') : 'Pending'}`);
         }
         else {
             console.log(chalk_1.default.yellow('Wallet: not verified'));
