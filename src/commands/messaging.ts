@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { apiGet, apiPost } from '../api.js';
+import { apiGet, apiPost, apiPatch } from '../api.js';
 
 export async function inbox(options: { unread?: boolean }): Promise<void> {
   try {
@@ -26,6 +26,45 @@ export async function inbox(options: { unread?: boolean }): Promise<void> {
         console.log(chalk.dim(`  ${preview}`));
       }
       console.log();
+    }
+    
+  } catch (e: any) {
+    console.error(chalk.red(`Error: ${e.message}`));
+    process.exit(1);
+  }
+}
+
+export async function read(
+  messageId: string | undefined,
+  options: { all?: boolean }
+): Promise<void> {
+  try {
+    if (options.all) {
+      const res = await apiGet('/inbox?unread=true');
+      const messages = res.messages || [];
+      
+      if (!messages.length) {
+        console.log(chalk.dim('No unread messages.'));
+        return;
+      }
+      
+      let marked = 0;
+      for (const msg of messages) {
+        if (!msg.read) {
+          await apiPatch(`/inbox/${msg.id}`, { read: true });
+          marked++;
+        }
+      }
+      
+      console.log(chalk.green(`✓ Marked ${marked} message${marked !== 1 ? 's' : ''} as read`));
+      
+    } else if (messageId) {
+      await apiPatch(`/inbox/${messageId}`, { read: true });
+      console.log(chalk.green(`✓ Marked ${messageId} as read`));
+      
+    } else {
+      console.error(chalk.red('Provide a message ID or use --all'));
+      process.exit(1);
     }
     
   } catch (e: any) {

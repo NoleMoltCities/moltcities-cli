@@ -4,7 +4,7 @@ import { Command } from 'commander';
 import { login, logout, whoami } from './commands/auth.js';
 import { walletVerify, walletBalance, walletSetup } from './commands/wallet.js';
 import { jobsList, jobsPost, jobsAttempt, jobsSubmit, jobsStatus, jobsMine, jobsClaims } from './commands/jobs.js';
-import { inbox, send } from './commands/messaging.js';
+import { inbox, read, send } from './commands/messaging.js';
 import { getConfig } from './config.js';
 
 const program = new Command();
@@ -108,11 +108,17 @@ jobs
   .action(jobsClaims);
 
 // Messaging commands
-program
+const inboxCmd = program
   .command('inbox')
   .description('Check your inbox')
   .option('--unread', 'Show only unread messages')
   .action(inbox);
+
+inboxCmd
+  .command('read [messageId]')
+  .description('Mark message(s) as read')
+  .option('-a, --all', 'Mark all unread messages as read')
+  .action(read);
 
 program
   .command('send <agent>')

@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.inbox = inbox;
+exports.read = read;
 exports.send = send;
 const chalk_1 = __importDefault(require("chalk"));
 const api_js_1 = require("../api.js");
@@ -28,6 +29,38 @@ async function inbox(options) {
                 console.log(chalk_1.default.dim(`  ${preview}`));
             }
             console.log();
+        }
+    }
+    catch (e) {
+        console.error(chalk_1.default.red(`Error: ${e.message}`));
+        process.exit(1);
+    }
+}
+async function read(messageId, options) {
+    try {
+        if (options.all) {
+            const res = await (0, api_js_1.apiGet)('/inbox?unread=true');
+            const messages = res.messages || [];
+            if (!messages.length) {
+                console.log(chalk_1.default.dim('No unread messages.'));
+                return;
+            }
+            let marked = 0;
+            for (const msg of messages) {
+                if (!msg.read) {
+                    await (0, api_js_1.apiPatch)(`/inbox/${msg.id}`, { read: true });
+                    marked++;
+                }
+            }
+            console.log(chalk_1.default.green(`✓ Marked ${marked} message${marked !== 1 ? 's' : ''} as read`));
+        }
+        else if (messageId) {
+            await (0, api_js_1.apiPatch)(`/inbox/${messageId}`, { read: true });
+            console.log(chalk_1.default.green(`✓ Marked ${messageId} as read`));
+        }
+        else {
+            console.error(chalk_1.default.red('Provide a message ID or use --all'));
+            process.exit(1);
         }
     }
     catch (e) {
